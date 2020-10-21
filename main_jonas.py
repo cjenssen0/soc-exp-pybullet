@@ -11,27 +11,29 @@ from spinup import td3_pytorch
 import pybullet_envs
 import torch as th
 
-ENV_STRING = ['HalfCheetahBulletEnv', 'Walker2DBulletEnv', 'HopperBulletEnv', 'HumanoidBulletEnv', 'AntBulletEnv']
+# ENV_STRING = ['HalfCheetahBulletEnv', 'Walker2DBulletEnv', 'HopperBulletEnv', 'HumanoidBulletEnv', 'AntBulletEnv']
+ENV_STRING = ['Walker2DBulletEnv', 'HopperBulletEnv']
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num_runs', type=int, default=25)
+    parser.add_argument('--num_runs', type=int, default=1)
     parser.add_argument('--num_options', type=int, default=3)
     parser.add_argument('--environment', type=int, default=0)
     parser.add_argument('--algorithm', type=str, default='soc')
-    parser.add_argument('--data_dir', type=str, default='/storage/soft-option-critic-experiments/')
+    # parser.add_argument('--data_dir', type=str, default='/storage/soft-option-critic-experiments/')
+    parser.add_argument('--data_dir', type=str, default='/home/jonas/Documents/git/soft_option_critic/spinningup/data')
 
     args = parser.parse_args()
 
     environment = ENV_STRING[args.environment]
 
     exp_name = environment \
-            + '_' \
+            + '_algo_' \
             + str(args.algorithm) \
-            + '_' \
+            + '_num_epochs_' \
             + str(args.num_runs) \
-            + '_' \
+            + '_num_options' \
             + str(args.num_options) \
 
     eg = ExperimentGrid(name=exp_name)
@@ -47,7 +49,7 @@ if __name__ == '__main__':
 
     # eg.add('start_steps', 0)
     # eg.add('alpha', [0.1, 0.2])
-    # eg.add('c', [0.01, 0.02])  # 0.01, 0.02,0.03
+    eg.add('c', [20, 100])  # 0.01, 0.02,0.03
 
     if args.algorithm == 'soc':
         eg.run(soc_pytorch, data_dir=args.data_dir)

@@ -1,33 +1,66 @@
-# Import packages and environment
 import numpy as np
-#import gym
-# import pybullet_envs as pe
-#import pybullet_envs
 
 from spinup.utils.run_utils import ExperimentGrid
 from spinup import soc_pytorch
-# from spinup import sac_pytorch
-# from spinup import ppo_pytorch
-# from spinup import vpg_pytorch
-# from spinup import ddpg_pytorch
+from spinup import sac_pytorch
+from spinup import ppo_pytorch
+from spinup import vpg_pytorch
+from spinup import ddpg_pytorch
+from spinup import td3_pytorch
+
 import pybullet_envs
 import torch as th
+
+# ENV_STRING = ['HalfCheetahBulletEnv', 'Walker2DBulletEnv', 'HopperBulletEnv', 'HumanoidBulletEnv', 'AntBulletEnv']
+ENV_STRING = ['Walker2DBulletEnv', 'HopperBulletEnv']
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument('--num_epochs', type=int, default=1)
     parser.add_argument('--num_runs', type=int, default=1)
+    parser.add_argument('--num_options', type=int, default=3)
+    parser.add_argument('--environment', type=int, default=0)
+    parser.add_argument('--algorithm', type=str, default='soc')
+    # parser.add_argument('--data_dir', type=str, default='/storage/soft-option-critic-experiments/')
+    parser.add_argument('--data_dir', type=str, default='/home/jonas/Documents/git/soft_option_critic/spinningup/data')
+
     args = parser.parse_args()
 
-    eg = ExperimentGrid(name='kuka2-3w-soc')
-    # eg.add('env_name', 'HalfCheetahBulletEnv-v0', '', True)
-    # eg.add('env_name', 'Walker2DBulletEnv-v0', '', True)
-    eg.add('env_name', 'KukaBulletEnv-v0', '', True)
+    environment = ENV_STRING[args.environment]
 
-    # eg.add('seed', [10*i for i in range(args.num_runs)])
-    eg.add('epochs', 25)
-    # eg.add('N_options', 3)
+    exp_name = environment \
+            + '_algo_' \
+            + str(args.algorithm) \
+            + '_num_epochs_' \
+            + str(args.num_epochs) \
+            + '_num_options' \
+            + str(args.num_options) \
+
+    eg = ExperimentGrid(name=exp_name)
+
+    eg.add('env_name', environment + '-v0', '', True)
+
+    eg.add('seed', [10*i for i in range(args.num_runs)])
+
+    eg.add('epochs', args.num_epochs)
+
+    if args.algorithm == 'soc':
+        eg.add('N_options', args.num_options)
+
     # eg.add('start_steps', 0)
-    # eg.add('alpha', [0.1, 0.2])
-    # eg.add('c', [0.01, 0.02, 0.03])  # 0.01, 0.02,0.03
-    eg.run(soc_pytorch)
+    eg.add('alpha', [0.1, 0.2, 0.5])
+    eg.add('c', [0.01, 0.05, 0.1])  # 0.01, 0.02,0.03
+
+    if args.algorithm == 'soc':
+        eg.run(soc_pytorch, data_dir=args.data_dir)
+    elif args.algorithm == 'sac':
+        eg.run(sac_pytorch, data_dir=args.data_dir)
+    elif args.algorithm == 'ppo':
+        eg.run(ppo_pytorch, data_dir=args.data_dir)
+    elif args.algorithm == 'vpg':
+        eg.run(vpg_pytorch, data_dir=args.data_dir)
+    elif args.algorithm == 'ddpg':
+        eg.run(ddpg_pytorch, data_dir=args.data_dir)
+    elif args.algorithm == 'td3':
+        eg.run(td3_pytorch, data_dir=args.data_dir)

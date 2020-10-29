@@ -19,7 +19,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--num_epochs', type=int, default=1)
     parser.add_argument('--num_runs', type=int, default=1)
-    parser.add_argument('--num_options', type=int, default=3)
+    parser.add_argument('--num_options', type=int, nargs='+', default=3)
+    parser.add_argument('--alpha', nargs='+', default=.1)
+    parser.add_argument('--c', nargs='+', default=.01)
     parser.add_argument('--environment', type=int, default=0)
     parser.add_argument('--algorithm', type=str, default='soc')
     # parser.add_argument('--data_dir', type=str, default='/storage/soft-option-critic-experiments/')
@@ -49,8 +51,8 @@ if __name__ == '__main__':
         eg.add('N_options', args.num_options)
 
     # eg.add('start_steps', 0)
-    eg.add('alpha', [0.1, 0.2, 0.5])
-    eg.add('c', [0.01, 0.05, 0.1])  # 0.01, 0.02,0.03
+    eg.add('alpha', args.alpha)
+    eg.add('c', args.c)
 
     if args.algorithm == 'soc':
         eg.run(soc_pytorch, data_dir=args.data_dir)

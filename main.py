@@ -25,8 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--environment', type=int, default=0)
     parser.add_argument('--algorithm', type=str, default='soc')
     parser.add_argument('--hid', type=list, default=[128,256,128])
-    # parser.add_argument('--data_dir', type=str, default='/storage/soft-option-critic-experiments/')
-    parser.add_argument('--data_dir', type=str, default='/home/jonas/Documents/git/soft_option_critic/spinningup/data')
+    parser.add_argument('--data_dir', type=str, default='/storage/soft-option-critic-experiments/')
 
     args = parser.parse_args()
 

@@ -12,7 +12,7 @@ import pybullet_envs
 import torch as th
 
 # ENV_STRING = ['HalfCheetahBulletEnv', 'Walker2DBulletEnv', 'HopperBulletEnv', 'HumanoidBulletEnv', 'AntBulletEnv']
-ENV_STRING = ['Walker2DBulletEnv', 'HopperBulletEnv']
+# ENV_STRING = ['Walker2DBulletEnv', 'HopperBulletEnv']
 
 if __name__ == '__main__':
     import argparse
@@ -22,14 +22,15 @@ if __name__ == '__main__':
     parser.add_argument('--num_options', type=int, nargs='+', default=3)
     parser.add_argument('--alpha', nargs='+', type=float, default=.1)
     parser.add_argument('--c', nargs='+', type=float, default=.01)
-    parser.add_argument('--environment', type=int, default=0)
+    parser.add_argument('--environment', type=str, default='HopperBulletEnv-v0')
     parser.add_argument('--algorithm', type=str, default='soc')
     parser.add_argument('--hid', type=list, nargs='+', default=[128,256,128])
-    parser.add_argument('--data_dir', type=str, default='/storage/soft-option-critic-experiments/')
+    parser.add_argument('--data_dir', type=str, default='./soft-option-critic-experiments/')
 
     args = parser.parse_args()
 
-    environment = ENV_STRING[args.environment]
+    # environment = ENV_STRING[args.environment]
+    environment = args.environment
 
     exp_name = environment \
             + '_algo_' \
@@ -41,7 +42,7 @@ if __name__ == '__main__':
 
     eg = ExperimentGrid(name=exp_name)
 
-    eg.add('env_name', environment + '-v0', '', True)
+    eg.add('env_name', environment , True)
 
     eg.add('seed', [10*i for i in range(args.num_runs)])
 
@@ -49,14 +50,11 @@ if __name__ == '__main__':
 
     if args.algorithm == 'soc':
         eg.add('N_options', args.num_options)
-
-    # eg.add('start_steps', 0)
-    eg.add('alpha', args.alpha)
-    eg.add('c', args.c)
-
-    if args.algorithm == 'soc':
+        eg.add('alpha', args.alpha)
+        eg.add('c', args.c)
         eg.run(soc_pytorch, data_dir=args.data_dir)
     elif args.algorithm == 'sac':
+        eg.add('alpha', args.alpha)
         eg.run(sac_pytorch, data_dir=args.data_dir)
     elif args.algorithm == 'ppo':
         eg.run(ppo_pytorch, data_dir=args.data_dir)

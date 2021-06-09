@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     eg = ExperimentGrid(name=exp_name)
 
-    eg.add('env_name', environment , True)
+    eg.add('env_name', environment, '', True)
 
     eg.add('seed', [10*i for i in range(args.num_runs)])
 
